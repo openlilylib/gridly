@@ -31,8 +31,8 @@
 %%%
 %%% First of all, you have to include the file that provides the
 %%% public interface
-\include "openlilylib"
-\useLibrary gridly
+\include "package.ily"
+\loadPackage gridly
 
 %%% Grid initialization
 %%% -------------------

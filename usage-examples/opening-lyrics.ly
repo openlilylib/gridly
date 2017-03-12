@@ -9,8 +9,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% The usual includes and module loading
-\include "openlilylib"
-\useLibrary "gridly"
+\include "package.ily"
+\loadPackage gridly
 
 %%% Initialize the grid: three segments for a single part
 \gridInit 2 #'("voice")
