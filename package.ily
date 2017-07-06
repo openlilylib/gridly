@@ -403,7 +403,7 @@ gridCompileCell =
    (string? number?)
    (check-grid)
    (check-coords part segment)
-   (if (this-file-compiled? parser location)
+   (if (this-file-compiled?)
        (let ((cache-segment #{ \getOption gridly.segment-range #}))
          (ly:message "Compiling test file")
          (if (not (get-music-cell part segment))

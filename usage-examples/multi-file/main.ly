@@ -2,12 +2,10 @@
 
 % See global.ily for module loading and initialization
 \include "global.ily"
-\useModule gridly.grid-templates
-
-% Workaround for strange bug with \useModule,
-% maybe due to the optional argument.
-% (we need _something_ Scheme-ish before any LilyPond code)
-#(display "")
+% TODO: Change to
+%   \useModule gridly/grid-templates
+% when https://github.com/openlilylib/oll-core/issues/9 has been implemented
+\include "../../grid-templates.ily"
 
 \include "parts/soprano-I.ily"
 \include "parts/alto-I.ily"
