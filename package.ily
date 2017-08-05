@@ -29,34 +29,6 @@
   currently only the grid-templates module is implemented
 %}
 
-#(ly:set-option 'relative-includes #t)
-
-\include "../oll-core/package.ily"
-
-\registerPackage gridly \with {
-  maintainers = #'( "Urs Liska <ul@openlilylib.org>"
-                    "Matteo Ceccarello <matteo.ceccarello@gmail.com>")
-  version = "0.6.0"
-  short-description = "Toolkit to implement the "segmented grid" approach"
-  description = "TODO!"
-
-  lilypond-min-version = "2.19.22" % To be tested!
-}
-
-\registerLibrary gridly \with {
-  maintainers = #'( "Urs Liska <ul@openlilylib.org>"
-                    "Matteo Ceccarello <matteo.ceccarello@gmail.com>")
-  version = "0.6.0"
-  short-description = "Toolkit to implement the "segmented grid" approach"
-  description = "TODO!"
-
-  lilypond-min-version = "2.19.22" % To be tested!
-}
-
-%%% Initialization of the GridLY library
-
-#(define gridly-version "0.6.0")
-
 %%% The association list holding all the music.
 #(if (not (defined? 'music-grid))
      (define music-grid #f))
@@ -67,11 +39,6 @@
 
 %%% Default segment range to the whole grid
 \registerOption gridly.segment-range #'all
-
-\void #(oll:log "Initialized GridLY version ~a" gridly-version)
-
-
-\registerModule gridly.grid-templates
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
