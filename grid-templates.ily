@@ -1,4 +1,4 @@
-\version "2.18.2"
+\version "2.24.0"
 
 %% gridly - simple segmented grid for LilyPond
 %% Copyright (C) 2015 - Matteo Ceccarello
@@ -18,7 +18,7 @@
 
 
 SATBChoir =
-#(define-music-function (parser location)()
+#(define-music-function ()()
    #{
      <<
        \new ChoirStaff <<
@@ -43,7 +43,7 @@ SATBChoir =
 
 rehearsalMidi =
 #(define-void-function
-   (parser location music name)
+   (music name)
    (ly:music? string?)
    (let ((book
           #{
@@ -67,6 +67,6 @@ rehearsalMidi =
                       #{ \paper { } #}
                       #{ \layout { } #}
                       (string-append
-                       (ly:parser-output-name parser)
+                       (ly:parser-output-name)
                        "-rehearsal-"
                        name))))

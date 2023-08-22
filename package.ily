@@ -1,4 +1,4 @@
-\version "2.18.2"
+\version "2.24.0"
 
 %% gridly - simple segmented grid for LilyPond
 %% Copyright (C) 2015 - Matteo Ceccarello
@@ -37,12 +37,16 @@
 #(define gridly-version "0.6.0")
 
 %%% The association list holding all the music.
-#(if (not (defined? 'music-grid))
-     (define music-grid #f))
+#(define music-grid
+   (if (not (defined? 'music-grid))
+       #f
+       music-grid))
 
 %%% Information that needs to be set up using \initMusicGrid
-#(if (not (defined? 'music-grid-meta))
-     (define music-grid-meta #f))
+#(define music-grid-meta
+   (if (not (defined? 'music-grid-meta))
+       #f
+       music-grid-meta))
 
 %%% Default segment range to the whole grid
 \registerOption gridly.segment-range #'all
@@ -127,7 +131,7 @@
 
 gridDisplay =
 #(define-void-function
-   (parser location) ()
+   () ()
    (let* ((num-segments (hash-ref music-grid-meta #:segments))
           (segments (map (lambda (x) (+ 1 x)) (iota num-segments)))
           (parts (hash-ref music-grid-meta #:parts)))
@@ -166,7 +170,7 @@ gridDisplay =
 
 gridCheck =
 #(define-void-function
-   (parser location) ()
+   () ()
    (for-each
     (lambda (segment)
       (check-durations segment #f))
@@ -176,7 +180,7 @@ gridCheck =
 %%% Grid initialization
 gridInit =
 #(define-void-function
-   (parser location segments parts) (number? list?)
+   (segments parts) (number? list?)
    (if music-grid
        (ly:debug "Music grid already initialized, skipping initialization")
        (set! music-grid (make-hash-table)))
@@ -207,7 +211,7 @@ gridInit =
 
 gridPutMusic =
 #(define-void-function
-   (parser location part segment ctx-mod-or-music)
+   (part segment ctx-mod-or-music)
    (string? number? ctx-mod-or-music?)
    (check-grid)
    (check-coords part segment)
@@ -233,7 +237,7 @@ gridPutMusic =
      (if (not (ly:music? (assoc-ref props 'music)))
          (begin
            (ly:input-message
-            location "No music defined for ~a:~a"
+            (*location*) "No music defined for ~a:~a"
             part segment)
            (ly:error "The `music' argument is mandatory"))
          (let ((value (make <cell>
@@ -249,7 +253,7 @@ gridPutMusic =
 
 gridSetSegmentTemplate =
 #(define-void-function
-   (parser location segment ctx-mod-or-music)
+   (segment ctx-mod-or-music)
    (number? ctx-mod-or-music?)
    (if (get-music-cell "<template>" segment)
        (ly:debug "Skipping setting of <template>:~a, already set" segment)
@@ -320,7 +324,7 @@ gridGetRange =
 
 gridSetRange =
 #(define-void-function
-    (parser location start-end) (segment-selector?)
+    (start-end) (segment-selector?)
     #{ \setOption gridly.segment-range #start-end #})
 
 #(define (prepend-barcheck music barnumber)
@@ -339,7 +343,7 @@ gridSetRange =
 
 gridGetMusic =
 #(define-music-function
-   (parser location part) (string?)
+   (part) (string?)
    (let* ((cells (get-cell-range part #{ \getOption gridly.segment-range #}))
           (music (map cell:music cells))
           (transpose-keys (map cell:transposeKey cells))
@@ -367,7 +371,7 @@ gridGetMusic =
 
 gridGetLyrics =
 #(define-music-function
-   (parser location part) (string?)
+   (part) (string?)
    (let* ((cells (get-cell-range part #{ \getOption gridly.segment-range #}))
           (lyrics (map cell:lyrics cells))
           (opening-lyrics (let ((maybe-lyrics (cell:opening-lyrics (car cells))))
@@ -393,13 +397,13 @@ gridGetLyrics =
                                              ",,,'0@a"))
           (segment-str (format segment-format-str segment)))
      (format "~a-~a-~a"
-             (ly:parser-output-name parser)
+             (ly:parser-output-name)
              part
              segment-str)))
 
 gridCompileCell =
 #(define-void-function
-   (parser location part segment)
+   (part segment)
    (string? number?)
    (check-grid)
    (check-coords part segment)
@@ -436,7 +440,7 @@ gridCompileCell =
                             #{ \paper {} #}
                             #{ \layout {} #}
            (format-cell-file-name
-            parser
+            (*parser*)
             part
             segment))
          #{ \setOption gridly.segment-range #cache-segment #}))))
@@ -446,38 +450,38 @@ gridCompileCell =
 
 gridTest =
 #(define-void-function
-   (parser location part segment)
+   (part segment)
    (string? number?)
    (ly:input-warning
-    location
+    (*location*)
     (string-append
      "\n\tFunction `~a' is deprecated in favor of `~a' and"
      "\n\twill be removed in a future release."
      "\n\tPlease replace the former with the latter.")
     "gridTest" "gridCompileCell")
-   ((ly:music-function-extract gridCompileCell) parser location part segment))
+   ((ly:music-function-extract gridCompileCell)  part segment))
 
 
 gridSetStructure =
 #(define-void-function
-   (parser location segment ctx-mod music)
+   (segment ctx-mod music)
    (number? (ly:context-mod? #{ \with{} #}) ly:music?)
    (ly:input-warning
-    location
+    (*location*)
     (string-append
      "\n\tFunction `~a' is deprecated in favor of `~a' and"
      "\n\twill be removed in a future release."
      "\n\tPlease replace the former with the latter.")
     "gridSetStructure" "gridSetSegmentTemplate")
    ((ly:music-function-extract gridSetSegmentTemplate)
-    parser location segment ctx-mod music))
+     segment ctx-mod music))
 
 
 gridGetStructure =
 #(define-music-function
-   (parser location) ()
+   () ()
    (ly:input-warning
-    location
+    (*location*)
     (string-append
      "\n\tThe function `gridGetStructure' is deprecated and is"
      "\n\tno longer part of the public interface of GridLY."
@@ -492,10 +496,10 @@ gridGetStructure =
 
 gridPutMusicDepr =
 #(define-void-function
-   (parser location part segment ctx-mod music)
+   (part segment ctx-mod music)
    (string? number? (ly:context-mod?) ly:music?)
    (ly:input-warning
-    location
+    (*location*)
     "This function is deprecated, use `gridPutMusic' instead")
    (if ctx-mod
        (let ((context (ly:make-context-mod
@@ -507,10 +511,10 @@ gridPutMusicDepr =
 
 gridSetSegmentTemplateDepr =
 #(define-void-function
-   (parser location segment ctx-mod music)
+   (segment ctx-mod music)
    (number? (ly:context-mod? #{ \with{} #}) ly:music?)
    (ly:input-warning
-    location
+    (*location*)
     "This function is deprecated, use `setSegmentTemplate' instead")
    (let ((context (ly:make-context-mod
                    (append
