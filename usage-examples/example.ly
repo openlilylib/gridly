@@ -1,4 +1,4 @@
-\version "2.18.2"
+\version "2.24.0"
 
 %% gridly - simple segmented grid for LilyPond
 %% Copyright (C) 2015 - Matteo Ceccarello
@@ -282,7 +282,7 @@
   
   \new Staff \new Voice {
     \gridGetRange "soprano" 1
-    \partcombine
+    \partCombine
         $(gridGetRange "soprano" 2)
         \transpose c c' $(gridGetRange "basso" 2)
   }

@@ -1,4 +1,4 @@
-\version "2.18.2"
+\version "2.24.0"
 
 % See global.ily for module loading and initialization
 \include "global.ily"
